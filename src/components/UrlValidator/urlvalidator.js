@@ -12,22 +12,28 @@ const UriValidator = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    let url = `${domain}/${path.split(" ").join("/")}`;
+    let url = `${domain}`;
 
-    const domainRegex = /^www\.[a-zA-Z]+\.[a-zA-Z]+$/;
+    const domainRegex = /^www\.[a-zA-Z]+\.(com|in|org|co)$/;
     if (!domainRegex.test(domain)) {
-      setMessage("Invalid URL! Please recheck your URL");
+      setMessage(
+        "Invalid URL! Please recheck your URL. Allowed top-level domains are com|in|org|co"
+      );
       setMessageClass("error");
       return;
     }
 
     const pathRegex = /^[a-zA-Z0-9]+((\s[a-zA-Z0-9]+)*)$/;
-    if (!pathRegex.test(path)) {
-      setMessage(
-        "Error in the Path. The path should contain words separated by spaces and the words should only be alphanumeric characters"
-      );
-      setMessageClass("error");
-      return;
+    if (path.length != 0) {
+      if (!pathRegex.test(path)) {
+        setMessage(
+          "Error in the Path. The path should contain words separated by spaces and the words should only be alphanumeric characters"
+        );
+        setMessageClass("error");
+        return;
+      } else {
+        url = `${domain}/${path.split(" ").join("/")}`;
+      }
     }
 
     if (method === "POST" || method === "PUT") {
