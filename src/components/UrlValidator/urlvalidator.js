@@ -24,7 +24,7 @@ const UriValidator = () => {
     }
 
     const pathRegex = /^[a-zA-Z0-9]+((\s[a-zA-Z0-9]+)*)$/;
-    if (path.length != 0) {
+    if (path.length !== 0) {
       if (!pathRegex.test(path)) {
         setMessage(
           "Error in the Path. The path should contain words separated by spaces and the words should only be alphanumeric characters"
