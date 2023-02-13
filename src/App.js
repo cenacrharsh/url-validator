@@ -1,4 +1,4 @@
-import UriValidator from "./components/UrlValidator";
+import UriValidator from "./components/UrlValidator/urlvalidator";
 
 function App() {
   return (

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./style.css";
 
 const UriValidator = () => {
   const [domain, setDomain] = useState("");
@@ -6,24 +7,60 @@ const UriValidator = () => {
   const [method, setMethod] = useState("GET");
   const [body, setBody] = useState("");
   const [message, setMessage] = useState("");
+  const [messageClass, setMessageClass] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let url = `${domain}/${path.split(" ").join("/")}`;
-    setMessage(`URL: ${url}`);
+
+    const domainRegex = /^www\.[a-zA-Z]+\.[a-zA-Z]+$/;
+    if (!domainRegex.test(domain)) {
+      setMessage("Invalid URL! Please recheck your URL");
+      setMessageClass("error");
+      return;
+    }
+
+    const pathRegex = /^[a-zA-Z0-9]+((\s[a-zA-Z0-9]+)*)$/;
+    if (!pathRegex.test(path)) {
+      setMessage(
+        "Error in the Path. The path should contain words separated by spaces and the words should only be alphanumeric characters"
+      );
+      setMessageClass("error");
+      return;
+    }
 
     if (method === "POST" || method === "PUT") {
       if (!body) {
         setMessage("Error in the Body");
+        setMessageClass("error");
         return;
       }
+
+      const bodyRegex = /^\{("[a-zA-Z]+")\s*:([\s\S]+)\}$/;
+      if (!bodyRegex.test(body)) {
+        setMessage("Error in the format of the Body");
+        setMessageClass("error");
+        return;
+      }
+
+      const bodyKeyValue = body
+        .slice(1, -1)
+        .split(":")
+        .map((pair) => pair.replace(/"/g, "").trim());
+      url += `?${bodyKeyValue[0]}=${bodyKeyValue[1]}`;
     }
+
+    setMessage(`URL: ${url}`);
+    setMessageClass("success");
   };
 
   return (
     <form onSubmit={handleSubmit} data-testid="submit">
       <div>
+        <div data-testid="message" className={messageClass}>
+          {message}
+        </div>
         <label>Domain:</label>
         <input
           type="text"
@@ -64,8 +101,7 @@ const UriValidator = () => {
           />
         </div>
       )}
-      <button type="submit">Submit</button>
-      <div data-testid="message">{message}</div>
+      <button type="submit">Validate</button>
     </form>
   );
 };
